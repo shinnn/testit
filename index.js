@@ -1,29 +1,27 @@
 'use strict'
 
-var IS_BROWSER = require('is-browser');
+const IS_BROWSER = require('is-browser');
 if (!IS_BROWSER) {
-  var r = require;
-  var wtfnode = (r)('wtfnode');
+  const r = require;
+  const wtfnode = (r)('wtfnode');
 }
-var Suite = require('./lib/suite');
-var defaultSuite = new Suite();
+const Suite = require('./lib/suite');
+const defaultSuite = new Suite();
 defaultSuite.addLogging();
 defaultSuite.addExit();
 
-var runTriggered = false;
+let runTriggered = false;
 function it(name, fn, options) {
   defaultSuite.addTest(name, fn, options);
   if (!runTriggered) {
     runTriggered = true;
-    setTimeout(function () {
-      defaultSuite.run().done(function () {
+    setImmediate(() => {
+      defaultSuite.run().then(() => {
         if (!IS_BROWSER) {
-          setTimeout(function () {
-            wtfnode.dump();
-          }, 5000).unref()
+          setTimeout(() => wtfnode.dump(), 5000).unref()
         }
       });
-    }, 0);
+    });
   }
 }
 function run(fn, options) {
